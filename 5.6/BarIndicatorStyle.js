@@ -12,8 +12,61 @@ BarIndicatorStyle.prototype = {
         this.applet = applet;
         this.button = [];
         this.update_grid(cols, rows, height);
+
+        // 初始化标题标签
+        this.window_title_label = new St.Label({
+            text: "", // 初始为空
+            style_class: "window-title-label",
+            reactive: false,
+        });
+
+        // 修改 _init 中的容器设置
+        this.window_title_bin = new St.Bin({
+            child: this.window_title_label,
+            y_align: St.Align.MIDDLE,
+            y_expand: true, // 新增关键设置
+            y_fill: true,
+            x_align: St.Align.START,
+        });
+
+        // 修改标签样式 (增加垂直 padding)
+        this.window_title_label.set_style(`
+            font-size: 22px;
+            padding: 6px 8px;  /* 增加垂直间距 */
+            margin-left: 16px;  /* 新增左侧间距 */
+            border-style: solid;
+            border-width: 2px;
+            border-color: #cccccc;
+            border-radius: 8px;
+        `);
+
+        // 设置容器高度与按钮一致
+        this.window_title_bin.set_width(900); // 自动调整宽度以适应内容
+        this.window_title_bin.set_height(this.height);
+
+        // 将容器添加到界面
+        this.applet.actor.add(this.window_title_bin);
+
+        // 绑定事件
         this.switch_id = global.window_manager.connect('switch-workspace', Lang.bind(this, this.update));
         this.scroll_id = this.applet.actor.connect('scroll-event', Lang.bind(this, this.onMouseScroll));
+
+        // 监听窗口切换事件
+        this.window_focus_id = global.display.connect('notify::focus-window', Lang.bind(this, this.update_window_title));
+    },
+
+    update_window_title: function () {
+        let active_workspace = global.workspace_manager.get_active_workspace();
+        let focus_window = global.display.focus_window;
+
+        if (focus_window && focus_window.get_workspace() === active_workspace) {
+            // 获取窗口标题并更新标签
+            let title = focus_window.title || "无标题";
+            this.window_title_label.set_text(title);
+        } else {
+            // 如果没有焦点窗口或不在当前工作区
+            this.window_title_label.set_text("无活动窗口");
+        }
     },
 
     update_grid: function (cols, rows, height) {
@@ -26,6 +79,7 @@ BarIndicatorStyle.prototype = {
     cleanup: function () {
         global.window_manager.disconnect(this.switch_id);
         this.applet.actor.disconnect(this.scroll_id);
+        global.display.disconnect(this.window_focus_id);
     },
 
     onMouseScroll: function (actor, event) {
@@ -116,7 +170,11 @@ BarIndicatorStyle.prototype = {
 
         this.button = [];
         for (let i = 0; i < global.workspace_manager.n_workspaces; ++i) {
-            this.button[i] = new St.Button({ name: 'workspaceButton', style_class: 'workspace-button', reactive: true });
+            this.button[i] = new St.Button({
+                name: 'workspaceButton',
+                style_class: 'workspace-button',
+                reactive: true,
+            });
 
             let text = (i + 1).toString();
             let label = new St.Label({ text: text });
@@ -128,6 +186,7 @@ BarIndicatorStyle.prototype = {
             this.button[i].set_width(this.height * 0.7);
             this.button[i].connect('button-release-event', Lang.bind(this, this.onWorkspaceButtonClicked));
         }
+
         this.update();
     },
 
@@ -152,7 +211,7 @@ BarIndicatorStyle.prototype = {
 
             if (i == active_ws) {
                 this.button[i].get_child().set_text((i + 1).toString());
-                this.button[i].set_style("background-color: #cccccc; border-radius: 4px; color: #000000;"); // 设置激活样式
+                this.button[i].set_style("background-color: #cccccc; border-radius: 6px; color: #000000;"); // 设置激活样式
             } else {
                 this.button[i].get_child().set_text((i + 1).toString());
                 this.button[i].set_style(""); // 清除样式
