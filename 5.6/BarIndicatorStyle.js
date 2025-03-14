@@ -211,9 +211,11 @@ BarIndicatorStyle.prototype = {
 
             if (i == active_ws) {
                 this.button[i].get_child().set_text((i + 1).toString());
-                this.button[i].set_style("background-color: #cccccc; border-radius: 6px; color: #000000;"); // 设置激活样式
+                this.button[i].set_width(this.height * 1.3);
+                this.button[i].set_style("background-color: #cccccc; border-radius: 10px; color: #000000;"); // 设置激活样式
             } else {
                 this.button[i].get_child().set_text((i + 1).toString());
+                this.button[i].set_width(this.height * 0.7);
                 this.button[i].set_style(""); // 清除样式
             }
         }
