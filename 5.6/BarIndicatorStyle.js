@@ -1,6 +1,7 @@
 const Lang = imports.lang;
 const St = imports.gi.St;
 const Clutter = imports.gi.Clutter;
+const Mainloop = imports.mainloop;
 
 function BarIndicatorStyle(applet, cols, rows, height) {
     this._init(applet, cols, rows, height);
@@ -53,6 +54,24 @@ BarIndicatorStyle.prototype = {
 
         // 监听窗口切换事件
         this.window_focus_id = global.display.connect('notify::focus-window', Lang.bind(this, this.update_window_title));
+
+        // 定时轮询浏览器窗口标题
+        this.poll_id = Mainloop.timeout_add(500, Lang.bind(this, this.poll_window_title));
+    },
+
+    poll_window_title: function () {
+        let focus_window = global.display.focus_window;
+        if (focus_window) {
+            let new_title = focus_window.title || "无标题";
+            if (this.window_title_label.get_text() !== new_title) {
+                this.window_title_label.set_text(new_title);
+            }
+        } else {
+            this.window_title_label.set_text("无活动窗口");
+        }
+
+        // 继续轮询
+        return true;
     },
 
     update_window_title: function () {
@@ -80,6 +99,10 @@ BarIndicatorStyle.prototype = {
         global.window_manager.disconnect(this.switch_id);
         this.applet.actor.disconnect(this.scroll_id);
         global.display.disconnect(this.window_focus_id);
+        if (this.poll_id) {
+            Mainloop.source_remove(this.poll_id);
+            this.poll_id = null;
+        }
     },
 
     onMouseScroll: function (actor, event) {
