@@ -30,15 +30,18 @@ BarIndicatorStyle.prototype = {
             x_align: St.Align.START,
         });
 
+        let panel_heights = global.settings.get_value("panels-height").deep_unpack()[0]; // 获取数组  
+        let base_size = parseInt(panel_heights.split(":")[1]) || 40;
+
         // 修改标签样式 (增加垂直 padding)
         this.window_title_label.set_style(`
-            font-size: 22px;
-            padding: 6px 8px;  /* 增加垂直间距 */
+            font-size: ${0.5 * base_size}px;
+            padding: ${0.15 * base_size}px 8px;  /* 增加垂直间距 */
             margin-left: 16px;  /* 新增左侧间距 */
             border-style: solid;
             border-width: 2px;
             border-color: #cccccc;
-            border-radius: 8px;
+            border-radius: ${0.2 * base_size}px;
         `);
 
         // 设置容器高度与按钮一致
@@ -234,12 +237,12 @@ BarIndicatorStyle.prototype = {
 
             if (i == active_ws) {
                 this.button[i].get_child().set_text((i + 1).toString());
-                this.button[i].set_width(this.height * 1.3);
-                this.button[i].set_style("background-color: #cccccc; border-radius: 10px; color: #000000;"); // 设置激活样式
+                this.button[i].set_width(this.height * 2);
+                this.button[i].set_style("background-color: #cccccc; border-radius: 30px; color: #000000; margin-left: 10px;"); // 设置激活样式
             } else {
                 this.button[i].get_child().set_text((i + 1).toString());
                 this.button[i].set_width(this.height * 0.7);
-                this.button[i].set_style(""); // 清除样式
+                this.button[i].set_style(" margin-left: 10px;"); // 清除样式
             }
         }
 
