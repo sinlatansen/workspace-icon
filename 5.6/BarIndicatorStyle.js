@@ -12,6 +12,7 @@ BarIndicatorStyle.prototype = {
     _init: function (applet, cols, rows, height) {
         this.applet = applet;
         this.button = [];
+        this.prefix = "＞ ";
         this.update_grid(cols, rows, height);
 
         // 初始化标题标签
@@ -35,8 +36,10 @@ BarIndicatorStyle.prototype = {
 
         // 修改标签样式 (增加垂直 padding)
         this.window_title_label.set_style(`
-            font-size: ${0.5 * base_size}px;
-            padding: ${0.15 * base_size}px 8px;  /* 增加垂直间距 */
+            font-family: "Fira Code Nerd Font, Microsoft YaHei, Symbols Nerd Font";
+            font-weight: 450;
+            font-size: ${0.6 * base_size}px;
+            padding: ${0 * base_size}px 8px;  /* 增加垂直间距 */
             margin-left: 16px;  /* 新增左侧间距 */
             border-style: solid;
             border-width: 2px;
@@ -62,10 +65,38 @@ BarIndicatorStyle.prototype = {
         this.poll_id = Mainloop.timeout_add(500, Lang.bind(this, this.poll_window_title));
     },
 
+    get_app_icon: function (wm_class) {
+        let appIcons = {
+            "code": "󰨞",
+            "org.wezfurlong.wezterm": "",
+            "vivaldi-stable": "",
+            "wechat": "",
+            "siyuan": "",
+            "dida": "",
+            "wemeetapp": "󰤙",
+            "qq": "",
+            "jetbrains-clion": "",
+            "jetbrains-webstorm": "",
+            "jetbrains-pycharm": "",
+            "yesplaymusic": "",
+            "albert": "",
+            "nemo-desktop": "",
+        };
+
+        for (let key in appIcons) {
+            if (wm_class.includes(key)) {
+                return appIcons[key];
+            }
+        }
+        return ""; // 默认图标
+    },
+
     poll_window_title: function () {
         let focus_window = global.display.focus_window;
         if (focus_window) {
-            let new_title = "＞ " + focus_window.title || "无标题";
+            let wm_class = focus_window.get_wm_class().toLowerCase();
+            let icon = this.get_app_icon(wm_class);
+            let new_title = `${icon} ${focus_window.title || "无标题"}`;
             if (this.window_title_label.get_text() !== new_title) {
                 this.window_title_label.set_text(new_title);
             }
@@ -82,8 +113,10 @@ BarIndicatorStyle.prototype = {
         let focus_window = global.display.focus_window;
 
         if (focus_window && focus_window.get_workspace() === active_workspace) {
-            // 获取窗口标题并更新标签
-            let title = "＞ " + focus_window.title || "无标题";
+            let wm_class = focus_window.get_wm_class().toLowerCase();
+            global.log(`wm_class: ${wm_class}`);
+            let icon = this.get_app_icon(wm_class);
+            let title = `${icon} ${focus_window.title || "无标题"}`;
             this.window_title_label.set_text(title);
         } else {
             // 如果没有焦点窗口或不在当前工作区
