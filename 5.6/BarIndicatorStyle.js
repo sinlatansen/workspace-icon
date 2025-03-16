@@ -36,7 +36,7 @@ BarIndicatorStyle.prototype = {
 
         // 修改标签样式 (增加垂直 padding)
         this.window_title_label.set_style(`
-            font-family: "Fira Code Nerd Font, Microsoft YaHei, Symbols Nerd Font";
+            font-family: "Iosevka, Symbols Nerd Font, Source Han Sans";
             font-weight: 450;
             font-size: ${0.6 * base_size}px;
             padding: ${0 * base_size}px 8px;  /* 增加垂直间距 */
