@@ -65,7 +65,7 @@ BarIndicatorStyle.prototype = {
     poll_window_title: function () {
         let focus_window = global.display.focus_window;
         if (focus_window) {
-            let new_title = focus_window.title || "无标题";
+            let new_title = "＞ " + focus_window.title || "无标题";
             if (this.window_title_label.get_text() !== new_title) {
                 this.window_title_label.set_text(new_title);
             }
@@ -83,7 +83,7 @@ BarIndicatorStyle.prototype = {
 
         if (focus_window && focus_window.get_workspace() === active_workspace) {
             // 获取窗口标题并更新标签
-            let title = focus_window.title || "无标题";
+            let title = "＞ " + focus_window.title || "无标题";
             this.window_title_label.set_text(title);
         } else {
             // 如果没有焦点窗口或不在当前工作区
