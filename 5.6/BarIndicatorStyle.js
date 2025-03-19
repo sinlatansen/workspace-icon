@@ -12,7 +12,6 @@ BarIndicatorStyle.prototype = {
     _init: function (applet, cols, rows, height) {
         this.applet = applet;
         this.button = [];
-        this.prefix = "＞ ";
         this.update_grid(cols, rows, height);
 
         // 初始化标题标签
@@ -36,10 +35,10 @@ BarIndicatorStyle.prototype = {
 
         // 修改标签样式 (增加垂直 padding)
         this.window_title_label.set_style(`
-            font-family: "Iosevka, Symbols Nerd Font, Source Han Sans";
+            font-family: "Symbols Nerd Font, Sarasa Term SC Nerd";
             font-weight: 450;
             font-size: ${0.6 * base_size}px;
-            padding: ${0 * base_size}px 8px;  /* 增加垂直间距 */
+            padding: ${0.05 * base_size}px 8px;  /* 增加垂直间距 */
             margin-left: 16px;  /* 新增左侧间距 */
             border-style: solid;
             border-width: 2px;
@@ -72,7 +71,7 @@ BarIndicatorStyle.prototype = {
             "vivaldi-stable": "",
             "wechat": "",
             "siyuan": "",
-            "dida": "",
+            "dida": "",
             "wemeetapp": "󰤙",
             "qq": "",
             "jetbrains-clion": "",
@@ -81,6 +80,8 @@ BarIndicatorStyle.prototype = {
             "yesplaymusic": "",
             "albert": "",
             "nemo-desktop": "",
+            "clash for windows": "󰄛",
+            "webapp-dy8288": "󰎇",
         };
 
         for (let key in appIcons) {
